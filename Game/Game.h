@@ -17,10 +17,11 @@ class Game
         fout.close();
     }
 
-    // to start checkers
+   
+    // Запускает игру, управляет ходами игроков и завершает игру по окончанию.     
     int play()
     {
-        auto start = chrono::steady_clock::now();
+        auto start = chrono::steady_clock::now(); //таймер начала программы
         if (is_replay)
         {
             logic = Logic(&board, &config);
@@ -36,16 +37,16 @@ class Game
         int turn_num = -1;
         bool is_quit = false;
         const int Max_turns = config("Game", "MaxNumTurns");
-        while (++turn_num < Max_turns)
+        while (++turn_num < Max_turns) // цикл выполнаяется пока количество ходов не достигнит максимального
         {
             beat_series = 0;
             logic.find_turns(turn_num % 2);
             if (logic.turns.empty())
                 break;
             logic.Max_depth = config("Bot", string((turn_num % 2) ? "Black" : "White") + string("BotLevel"));
-            if (!config("Bot", string("Is") + string((turn_num % 2) ? "Black" : "White") + string("Bot")))
+            if (!config("Bot", string("Is") + string((turn_num % 2) ? "Black" : "White") + string("Bot"))) // проверяется чей ход
             {
-                auto resp = player_turn(turn_num % 2);
+                auto resp = player_turn(turn_num % 2); // вызывается функция ход игрока
                 if (resp == Response::QUIT)
                 {
                     is_quit = true;
@@ -73,9 +74,9 @@ class Game
                 }
             }
             else
-                bot_turn(turn_num % 2);
+                bot_turn(turn_num % 2); // вызывается функция ход бота
         }
-        auto end = chrono::steady_clock::now();
+        auto end = chrono::steady_clock::now(); // таймер окончания работы программы
         ofstream fout(project_path + "log.txt", ios_base::app);
         fout << "Game time: " << (int)chrono::duration<double, milli>(end - start).count() << " millisec\n";
         fout.close();
@@ -106,7 +107,7 @@ class Game
   private:
     void bot_turn(const bool color)
     {
-        auto start = chrono::steady_clock::now();
+        auto start = chrono::steady_clock::now(); // начало работы  бота
 
         auto delay_ms = config("Bot", "BotDelayMS");
         // new thread for equal delay for each turn
@@ -126,7 +127,7 @@ class Game
             board.move_piece(turn, beat_series);
         }
 
-        auto end = chrono::steady_clock::now();
+        auto end = chrono::steady_clock::now(); // окончание работы  бота
         ofstream fout(project_path + "log.txt", ios_base::app);
         fout << "Bot turn time: " << (int)chrono::duration<double, milli>(end - start).count() << " millisec\n";
         fout.close();

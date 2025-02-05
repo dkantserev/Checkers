@@ -5,7 +5,7 @@
 #include "../Models/Response.h"
 #include "Board.h"
 
-// methods for hands
+// класс обрабатывающий клики игрока
 class Hand
 {
   public:
@@ -18,14 +18,14 @@ class Hand
         Response resp = Response::OK;
         int x = -1, y = -1;
         int xc = -1, yc = -1;
-        while (true)
+        while (true) // цикл выполняется пока не произойдет корректный клик
         {
             if (SDL_PollEvent(&windowEvent))
             {
                 switch (windowEvent.type)
                 {
                 case SDL_QUIT:
-                    resp = Response::QUIT;
+                    resp = Response::QUIT; // клик на крестик (выход)
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     x = windowEvent.motion.x;
@@ -34,15 +34,15 @@ class Hand
                     yc = int(x / (board->W / 10) - 1);
                     if (xc == -1 && yc == -1 && board->history_mtx.size() > 1)
                     {
-                        resp = Response::BACK;
+                        resp = Response::BACK; // клик на кстрелку влево (закрыть программу)
                     }
                     else if (xc == -1 && yc == 8)
                     {
-                        resp = Response::REPLAY;
+                        resp = Response::REPLAY; // клик на символ повтора (переиграть)
                     }
                     else if (xc >= 0 && xc < 8 && yc >= 0 && yc < 8)
                     {
-                        resp = Response::CELL;
+                        resp = Response::CELL; // клип по клетке
                     }
                     else
                     {
@@ -61,9 +61,9 @@ class Hand
                     break;
             }
         }
-        return {resp, xc, yc};
+        return {resp, xc, yc}; // возвращает Response и координаты клика
     }
-
+    
     Response wait() const
     {
         SDL_Event windowEvent;
