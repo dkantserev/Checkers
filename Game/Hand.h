@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include <tuple>
 
 #include "../Models/Move.h"
 #include "../Models/Response.h"
 #include "Board.h"
 
-// êëàññ îáðàáàòûâàþùèé êëèêè èãðîêà
+// ÐºÐ»Ð°ÑÑ Ð¾Ð±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÑŽÑ‰Ð¸Ð¹ ÐºÐ»Ð¸ÐºÐ¸ Ð¸Ð³Ñ€Ð¾ÐºÐ°
 class Hand
 {
   public:
@@ -18,14 +18,14 @@ class Hand
         Response resp = Response::OK;
         int x = -1, y = -1;
         int xc = -1, yc = -1;
-        while (true) // öèêë âûïîëíÿåòñÿ ïîêà íå ïðîèçîéäåò êîððåêòíûé êëèê
+        while (true) // Ñ†Ð¸ÐºÐ» Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÑÐµÑ‚ÑÑ Ð¿Ð¾ÐºÐ° Ð½Ðµ Ð¿Ñ€Ð¾Ð¸Ð·Ð¾Ð¹Ð´ÐµÑ‚ ÐºÐ¾Ñ€Ñ€ÐµÐºÑ‚Ð½Ñ‹Ð¹ ÐºÐ»Ð¸Ðº
         {
             if (SDL_PollEvent(&windowEvent))
             {
                 switch (windowEvent.type)
                 {
                 case SDL_QUIT:
-                    resp = Response::QUIT; // êëèê íà êðåñòèê (âûõîä)
+                    resp = Response::QUIT; // ÐºÐ»Ð¸Ðº Ð½Ð° ÐºÑ€ÐµÑÑ‚Ð¸Ðº (Ð²Ñ‹Ñ…Ð¾Ð´)
                     break;
                 case SDL_MOUSEBUTTONDOWN:
                     x = windowEvent.motion.x;
@@ -34,15 +34,15 @@ class Hand
                     yc = int(x / (board->W / 10) - 1);
                     if (xc == -1 && yc == -1 && board->history_mtx.size() > 1)
                     {
-                        resp = Response::BACK; // êëèê íà êñòðåëêó âëåâî (çàêðûòü ïðîãðàììó)
+                        resp = Response::BACK; // ÐºÐ»Ð¸Ðº Ð½Ð° ÐºÑÑ‚Ñ€ÐµÐ»ÐºÑƒ Ð²Ð»ÐµÐ²Ð¾ (Ð·Ð°ÐºÑ€Ñ‹Ñ‚ÑŒ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñƒ)
                     }
                     else if (xc == -1 && yc == 8)
                     {
-                        resp = Response::REPLAY; // êëèê íà ñèìâîë ïîâòîðà (ïåðåèãðàòü)
+                        resp = Response::REPLAY; // ÐºÐ»Ð¸Ðº Ð½Ð° ÑÐ¸Ð¼Ð²Ð¾Ð» Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€Ð° (Ð¿ÐµÑ€ÐµÐ¸Ð³Ñ€Ð°Ñ‚ÑŒ)
                     }
                     else if (xc >= 0 && xc < 8 && yc >= 0 && yc < 8)
                     {
-                        resp = Response::CELL; // êëèï ïî êëåòêå
+                        resp = Response::CELL; // ÐºÐ»Ð¸Ð¿ Ð¿Ð¾ ÐºÐ»ÐµÑ‚ÐºÐµ
                     }
                     else
                     {
@@ -61,7 +61,7 @@ class Hand
                     break;
             }
         }
-        return {resp, xc, yc}; // âîçâðàùàåò Response è êîîðäèíàòû êëèêà
+        return {resp, xc, yc}; // Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ Response Ð¸ ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ñ‹ ÐºÐ»Ð¸ÐºÐ°
     }
     
     Response wait() const

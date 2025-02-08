@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -24,7 +24,7 @@ public:
     {
     }
 
-    // отрисовка стартового поля игры
+    // РѕС‚СЂРёСЃРѕРІРєР° СЃС‚Р°СЂС‚РѕРІРѕРіРѕ РїРѕР»СЏ РёРіСЂС‹
     int start_draw()
     {
         if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -73,7 +73,7 @@ public:
         rerender();
         return 0;
     }
-    // сброс отрисовки поля игры
+    // СЃР±СЂРѕСЃ РѕС‚СЂРёСЃРѕРІРєРё РїРѕР»СЏ РёРіСЂС‹
     void redraw()
     {
         game_results = -1;
@@ -83,7 +83,7 @@ public:
         clear_active();
         clear_highlight();
     }
-    // перемещение шашки
+    // РїРµСЂРµРјРµС‰РµРЅРёРµ С€Р°С€РєРё
     void move_piece(move_pos turn, const int beat_series = 0)
     {
         if (turn.xb != -1)
@@ -92,7 +92,7 @@ public:
         }
         move_piece(turn.x, turn.y, turn.x2, turn.y2, beat_series);
     }
-    // проверка возможности перемещения шашки
+    // РїСЂРѕРІРµСЂРєР° РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё РїРµСЂРµРјРµС‰РµРЅРёСЏ С€Р°С€РєРё
     void move_piece(const POS_T i, const POS_T j, const POS_T i2, const POS_T j2, const int beat_series = 0)
     {
         if (mtx[i2][j2])
@@ -109,7 +109,7 @@ public:
         drop_piece(i, j);
         add_history(beat_series);
     }
-    // удаление шашки с поля
+    // СѓРґР°Р»РµРЅРёРµ С€Р°С€РєРё СЃ РїРѕР»СЏ
     void drop_piece(const POS_T i, const POS_T j)
     {
         mtx[i][j] = 0;
@@ -180,7 +180,7 @@ public:
         clear_highlight();
         clear_active();
     }
-    // отрисовка завершения игры
+    // РѕС‚СЂРёСЃРѕРІРєР° Р·Р°РІРµСЂС€РµРЅРёСЏ РёРіСЂС‹
     void show_final(const int res)
     {
         game_results = res;

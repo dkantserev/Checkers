@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <chrono>
 #include <thread>
 
@@ -18,10 +18,10 @@ class Game
     }
 
    
-    // Запускает игру, управляет ходами игроков и завершает игру по окончанию.     
+    // Р—Р°РїСѓСЃРєР°РµС‚ РёРіСЂСѓ, СѓРїСЂР°РІР»СЏРµС‚ С…РѕРґР°РјРё РёРіСЂРѕРєРѕРІ Рё Р·Р°РІРµСЂС€Р°РµС‚ РёРіСЂСѓ РїРѕ РѕРєРѕРЅС‡Р°РЅРёСЋ.     
     int play()
     {
-        auto start = chrono::steady_clock::now(); //таймер начала программы
+        auto start = chrono::steady_clock::now(); //С‚Р°Р№РјРµСЂ РЅР°С‡Р°Р»Р° РїСЂРѕРіСЂР°РјРјС‹
         if (is_replay)
         {
             logic = Logic(&board, &config);
@@ -37,16 +37,16 @@ class Game
         int turn_num = -1;
         bool is_quit = false;
         const int Max_turns = config("Game", "MaxNumTurns");
-        while (++turn_num < Max_turns) // цикл выполнаяется пока количество ходов не достигнит максимального
+        while (++turn_num < Max_turns) // С†РёРєР» РІС‹РїРѕР»РЅР°СЏРµС‚СЃСЏ РїРѕРєР° РєРѕР»РёС‡РµСЃС‚РІРѕ С…РѕРґРѕРІ РЅРµ РґРѕСЃС‚РёРіРЅРёС‚ РјР°РєСЃРёРјР°Р»СЊРЅРѕРіРѕ
         {
             beat_series = 0;
             logic.find_turns(turn_num % 2);
             if (logic.turns.empty())
                 break;
             logic.Max_depth = config("Bot", string((turn_num % 2) ? "Black" : "White") + string("BotLevel"));
-            if (!config("Bot", string("Is") + string((turn_num % 2) ? "Black" : "White") + string("Bot"))) // проверяется чей ход
+            if (!config("Bot", string("Is") + string((turn_num % 2) ? "Black" : "White") + string("Bot"))) // РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ С‡РµР№ С…РѕРґ
             {
-                auto resp = player_turn(turn_num % 2); // вызывается функция ход игрока
+                auto resp = player_turn(turn_num % 2); // РІС‹Р·С‹РІР°РµС‚СЃСЏ С„СѓРЅРєС†РёСЏ С…РѕРґ РёРіСЂРѕРєР°
                 if (resp == Response::QUIT)
                 {
                     is_quit = true;
@@ -74,9 +74,9 @@ class Game
                 }
             }
             else
-                bot_turn(turn_num % 2); // вызывается функция ход бота
+                bot_turn(turn_num % 2); // РІС‹Р·С‹РІР°РµС‚СЃСЏ С„СѓРЅРєС†РёСЏ С…РѕРґ Р±РѕС‚Р°
         }
-        auto end = chrono::steady_clock::now(); // таймер окончания работы программы
+        auto end = chrono::steady_clock::now(); // С‚Р°Р№РјРµСЂ РѕРєРѕРЅС‡Р°РЅРёСЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹
         ofstream fout(project_path + "log.txt", ios_base::app);
         fout << "Game time: " << (int)chrono::duration<double, milli>(end - start).count() << " millisec\n";
         fout.close();
@@ -107,7 +107,7 @@ class Game
   private:
     void bot_turn(const bool color)
     {
-        auto start = chrono::steady_clock::now(); // начало работы  бота
+        auto start = chrono::steady_clock::now(); // РЅР°С‡Р°Р»Рѕ СЂР°Р±РѕС‚С‹  Р±РѕС‚Р°
 
         auto delay_ms = config("Bot", "BotDelayMS");
         // new thread for equal delay for each turn
@@ -127,7 +127,7 @@ class Game
             board.move_piece(turn, beat_series);
         }
 
-        auto end = chrono::steady_clock::now(); // окончание работы  бота
+        auto end = chrono::steady_clock::now(); // РѕРєРѕРЅС‡Р°РЅРёРµ СЂР°Р±РѕС‚С‹  Р±РѕС‚Р°
         ofstream fout(project_path + "log.txt", ios_base::app);
         fout << "Bot turn time: " << (int)chrono::duration<double, milli>(end - start).count() << " millisec\n";
         fout.close();
