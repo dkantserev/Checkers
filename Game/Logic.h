@@ -15,13 +15,25 @@ class Logic
     {
         rand_eng = std::default_random_engine (
             !((*config)("Bot", "NoRandom")) ? unsigned(time(0)) : 0);
+        scoring_mode = (*config)("Bot", "BotScoringType");
         optimization = (*config)("Bot", "Optimization");
     }
     
     //возвращает вектор лучших ход для указанного игрока
     vector<move_pos> find_best_turns(const bool color)
     {
-        // добавить код
+        
+        next_move.clear();
+        next_best_state.clear();
+        find_first_best_turn(board->get_board(), color, -1, -1, 0);
+        int state = 0;
+        vector<move_pos> res;
+        do {
+            res.push_back(next_move[state]);
+            state = next_best_state[state];
+        } while (state != -1 && next_move[state].x != -1);
+
+        return res;       
     }
 
 private:
@@ -45,10 +57,10 @@ private:
         {
             for (POS_T j = 0; j < 8; ++j)
             {
-                w += (mtx[i][j] == 1); // белых пешек
-                wq += (mtx[i][j] == 3); // белых королев
-                b += (mtx[i][j] == 2); // черных пешек
-                bq += (mtx[i][j] == 4); // черных королев
+                w += (mtx[i][j] == 1); // всего белых пешек
+                wq += (mtx[i][j] == 3); //      белых королев
+                b += (mtx[i][j] == 2); //       черных пешек
+                bq += (mtx[i][j] == 4); //      черных королев
                 if (scoring_mode == "NumberAndPotential")
                 {
                     w += 0.05 * (mtx[i][j] == 1) * (7 - i);
@@ -74,15 +86,123 @@ private:
     }
 
     double find_first_best_turn(vector<vector<POS_T>> mtx, const bool color, const POS_T x, const POS_T y, size_t state,
-                                double alpha = -1)
+        double alpha = -1)
     {
-        // добавить код
+        // инициализация информации о следующем ходе
+        next_move.emplace_back(-1, -1, -1, -1);
+        next_best_state.push_back(-1);
+
+        //  определяем возможные ходы
+        if (state != 0) {
+            find_turns(x, y, mtx);
+        }
+        auto now_turns = turns;
+        auto now_have_beats = have_beats;
+
+        // если бить нечего, передаём ход противнику и ищем лучший ответ
+        if (!now_have_beats && state != 0) {
+            return find_best_turns_rec(mtx, 1 - color, 0, alpha);
+        }
+
+        double best_score = -1;
+
+        // перебираем все возможные ходы
+        for (auto turn : now_turns) {
+            size_t new_state = next_move.size();
+            double score;
+
+            // если есть взятие, продолжаем поиск хода для той же фигуры
+            if (now_have_beats) {
+                score = find_first_best_turn(make_turn(mtx, turn), color, turn.x2, turn.y2, new_state, best_score);
+            }
+            // иначе передаём ход противнику
+            else {
+                score = find_best_turns_rec(make_turn(mtx, turn), 1 - color, 0, best_score);
+            }
+
+            // обновляем лучший ход
+            if (score > best_score) {
+                best_score = score;
+                next_move[state] = turn;
+                next_best_state[state] = (now_have_beats ? new_state : -1);
+            }
+        }
+        return best_score;
     }
 
     double find_best_turns_rec(vector<vector<POS_T>> mtx, const bool color, const size_t depth, double alpha = -1,
-                               double beta = INF + 1, const POS_T x = -1, const POS_T y = -1)
+        double beta = INF + 1, const POS_T x = -1, const POS_T y = -1)
     {
-        // добавить код
+        // достижение максимальной глубины поиска - оцениваем позицию
+        if (depth == Max_depth)
+        {
+            return calc_score(mtx, (depth % 2 == color));
+        }
+
+        // если продолжаем ход после взятия, ищем ходы для конкретной фигуры
+        if (x != -1)
+        {
+            find_turns(x, y, mtx);
+        }
+        else {
+            find_turns(color, mtx);
+        }
+        auto now_turns = turns;
+        bool now_have_beats = have_beats;
+
+        // если нет возможных ходов, передаём ход противнику
+        if (!now_have_beats && x != -1)
+        {
+            return find_best_turns_rec(mtx, 1 - color, depth + 1, alpha, beta);
+        }
+
+        // если у игрока нет ходов, это означает проигрыш
+        if (turns.empty())
+            return (depth % 2 ? 0 : INF);
+
+        double min_score = INF + 1;
+        double max_score = -1;
+
+        // перебираем все возможные ходы
+        for (auto turn : now_turns)
+        {
+            double score = 0.0;
+
+            // если нет взятия и ход только начинается, передаём ход противнику
+            if (!now_have_beats && x == -1)
+            {
+                score = find_best_turns_rec(make_turn(mtx, turn), 1 - color, depth + 1, alpha, beta);
+            }
+            // если ход продолжается, ищем следующий ход для той же фигуры
+            else
+            {
+                score = find_best_turns_rec(make_turn(mtx, turn), color, depth, alpha, beta, turn.x2, turn.y2);
+            }
+
+            // обновляем минимальную и максимальную оценки хода
+            min_score = min(min_score, score);
+            max_score = max(max_score, score);
+
+            // Альфа-бета отсечение
+            if (depth % 2) {
+                alpha = max(alpha, max_score);
+            }
+            else {
+                beta = min(beta, min_score);
+            }
+
+            // если находим отсечение, прекращаем перебор
+            if (optimization != "O0" && alpha > beta) {
+                break;
+            }
+
+            // дополнительное отсечение при равенстве альфа и бета
+            if (optimization != "O2" && alpha == beta) {
+                return (depth % 2 ? max_score + 1 : min_score - 1);
+            }
+        }
+        // возвращаем оптимальный результат для текущего игрока
+        return (depth % 2 ? max_score : min_score);
     }
 
 public:
@@ -224,6 +344,7 @@ private:
 
   private:
     default_random_engine rand_eng; // генератор случайных чисел
+    string scoring_mode;
     string optimization; // оценка позиции бота
     vector<move_pos> next_move; // лучшие ходы
     vector<int> next_best_state; // состояние после выполненого хода

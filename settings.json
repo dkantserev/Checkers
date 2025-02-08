@@ -1,18 +1,30 @@
 {
-    "WindowSize": {
-        "Width": 0,//изначальная ширина экрана
-        "Hight": 0 //высота экрана
-    },
-  "Bot": {
-    "IsWhiteBot": false, // является ли белый ботом
-    "IsBlackBot": true, // является ли черный ботом
-    "WhiteBotLevel": 0, // уровень просчета ходов белого бота
-    "BlackBotLevel": 5, // уровень просчета ходов черного бота
-    "BotDelayMS": 0, // задержка между шагами бота
-    "NoRandom": false, // случайные ходы бота
-    "Optimization": "O1" // оптимизация просчетов бота O0/O1/O2
+  "WindowSize": {
+    "_comment_w": "изначальная ширина экрана",
+    "Width": 0,
+    "_comment_h": "высота экрана",
+    "Hight": 0 
   },
-    "Game": {
-        "MaxNumTurns": 120 // максимальное количество ходов
-    }
+  "Bot": {
+    "_comment_IsWhiteBot": "является ли белый ботом",
+    "IsWhiteBot": false,
+    "_comment_IsBlackBot": "является ли черный ботом",
+    "IsBlackBot": true,
+    "_comment_WhiteBotLevel": "уровень просчета ходов белого бота",
+    "WhiteBotLevel": 0,
+    "_comment_BlackBotLevel": "уровень просчета ходов черного бота",
+    "BlackBotLevel": 5,
+    "_comment_BotScoringType": "оценка позиции бота",
+    "BotScoringType": "NumberAndPotential",
+    "_comment_BotDelayMS": "задержка между шагами бота",
+    "BotDelayMS": 0,
+    "_comment_oRandom": "случайные ходы бота",
+    "NoRandom": false,
+    "_comment_Optimization": "оптимизация просчетов бота",
+    "Optimization": "O1"
+  },
+  "Game": {
+    "_comment": "максимальное количество ходов",
+    "MaxNumTurns": 120
+  }
 }
